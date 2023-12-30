@@ -34,32 +34,7 @@ app.use('/users', usersRouter);
   /webapi/      企业官网用的  
 */
 
-//接受前端发来的token
-// app.use((req,res,next)=>{
-//   //如果token有效，给next()，放行
-//   if(req.url==='/adminapi/user/login'){
-//     next()
-//     console('这里是路径对了')
-//     return
-//   }
-//   // const token = req.headers["authorization"].split(" ")[1]
-//   // if(token){
-//   //   var payload = JWT.verify(token)
-//   //   console.log(payload)
-//   //   console('这里是token有了')
-//   //   if(payload){
-//   //     const newToken = JWT.generate({
-//   //       _id:payload._id,
-//   //       username:payload.username
-//   //     },"1d")
-//   //     console('这里是token有了')
-//   //     // res.header("Authorization",newToken)
-//   //     next()
-//   //   }else{
-//   //     res.status(401).send({errCode:"-1",errorInfo:"token过期"})
-//   //   }
-//   // }
-// })
+//接受前端发来的token，放在整个初始化路由之前去做
 
 app.use(UserRouter)
 // catch 404 and forward to error handler
