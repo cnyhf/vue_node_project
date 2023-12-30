@@ -24,12 +24,12 @@ const UserController = {
                             msg: '密码正确'
                         };
                         //生成token
-                        // const token = JWT.generate({
-                        //     _id:result[0]._id,
-                        //     username:result[0].username
-                        // },"1d")
-                        // console.log('这里是token刚生成',token)
-                        // res.header("Authorization",token)
+                        const token = JWT.generate({
+                            _id:result[0]._id,
+                            username:result[0].username
+                        },"1d")
+                        console.log('这里是token刚生成',token)
+                        res.header("Authorization",token)
                     }else {
                         response = {
                             code: 400,
