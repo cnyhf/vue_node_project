@@ -1,4 +1,3 @@
-
 const UserService = require('../../services/admin/UserService');
 const JWT = require("../../util/JWT")
 const UserController = {
@@ -27,8 +26,8 @@ const UserController = {
                         const token = JWT.generate({
                             _id:result[0]._id,
                             username:result[0].username
-                        },"1d")
-                        console.log('这里是token刚生成',token)
+                        },"10s")
+                        console.log('这里是token刚生成')
                         res.header("Authorization",token)
                     }else {
                         response = {

@@ -35,8 +35,35 @@ app.use('/users', usersRouter);
 */
 
 //接受前端发来的token，放在整个初始化路由之前去做
+app.use((req,res,next)=>{
+  //登录，token为空需要直接放行
+  //判断是否是login接口，如果是，直接调用next()函数，跳过后续中间件和路由处理
+  if(req.url==="/adminapi/user/login"){
+    next()
+    return
+  }
+  const token = req.headers["authorization"].split(" ")[1]
+  console.log(token)
+  //如果token为真，可以进行JWT的校验
+  if(token){ 
+    var payload = JWT.verify(token)
+    console.log(payload)
+    if(payload){
+      //没过期前需要再重新生成token，和之前一样的token
+      const newToken = JWT.generate({
+        _id:payload._id,
+        username:payload.username
+      },"10s")
+      res.header("Authorization",newToken)
+      next()
+    }else{
+      res.status(401).send({errCode:"-1",errorInfo:"token过期"})
+    } 
+  }
+})
 
 app.use(UserRouter)
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
