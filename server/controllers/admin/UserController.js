@@ -7,7 +7,6 @@ const UserController = {
         
         //拿到数据库返回的数据后，进行业务判断
         .then(result=>{
-            console.log("result",result)
             var password = req.body.password//获取前台请求的参数
             if (result.length === 0) {
                 response = {
@@ -20,14 +19,20 @@ const UserController = {
                     if (temp == password) {                 
                         response = {
                             code: 200,
-                            msg: '密码正确'
-                        };
+                            msg: '密码正确',
+                            data:{
+                                username: result[0].username,
+                                gender:result[0].gender?result[0].gender:0,
+                                introduction:result[0].introduction,
+                                avatar:result[0].avatar,
+                                role:result[0].role                       
+                            }
+                        }
                         //生成token
                         const token = JWT.generate({
-                            _id:result[0]._id,
+                            id:result[0].id,
                             username:result[0].username
-                        },"10s")
-                        console.log('这里是token刚生成')
+                        },"1d")
                         res.header("Authorization",token)
                     }else {
                         response = {
@@ -35,12 +40,44 @@ const UserController = {
                             msg: '密码错误'
                         };                      
                     }
-                    console.log(response)
                     res.json(response); // 以json形式，把操作结果返回给前台页面
-                    console.log(res.statusCode)
                     console.log('找到了')              
             } 
         })       
+    },
+    upload:async(req,res)=>{
+        // 解构出来
+        const {username,introduction,gender} = req.body
+        const avatar = req.file?`/avataruploads/${req.file.filename}`:""
+        const token = req.headers["authorization"].split(" ")[1]
+        var payload = JWT.verify(token)
+        console.log("body:",req.body,"file:",req.file)
+        console.log("payload:",payload)
+        // 调用Service模块更新数据
+        await UserService.upload({id:payload.id,username,
+            introduction,gender:Number(gender),avatar})
+            .then(result=>{
+                if(result.affectedRows == 1){
+                    if(avatar){
+                        res.send({
+                            code:200,
+                            data:{
+                                username,introduction,
+                                gender:Number(gender),
+                                avatar
+                            }
+                        })
+                    }else{
+                        res.send({
+                            code:200,
+                            data:{
+                                username,introduction,
+                                gender:Number(gender),
+                            }
+                        })
+                    }            
+                }
+            })          
     }
 }
 module.exports = UserController

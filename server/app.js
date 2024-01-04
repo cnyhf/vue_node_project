@@ -43,17 +43,15 @@ app.use((req,res,next)=>{
     return
   }
   const token = req.headers["authorization"].split(" ")[1]
-  console.log(token)
   //如果token为真，可以进行JWT的校验
   if(token){ 
     var payload = JWT.verify(token)
-    console.log(payload)
     if(payload){
       //没过期前需要再重新生成token，和之前一样的token
       const newToken = JWT.generate({
-        _id:payload._id,
+        id:payload.id,
         username:payload.username
-      },"10s")
+      },"1d")
       res.header("Authorization",newToken)
       next()
     }else{
