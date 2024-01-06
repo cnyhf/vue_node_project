@@ -78,6 +78,22 @@ const UserController = {
                     }            
                 }
             })          
+    },
+    add:async(req,res)=>{
+        // 解构出来
+        const {username,introduction,gender,role,password} = req.body
+        const avatar = req.file?`/avataruploads/${req.file.filename}`:""
+        // 调用Service模块更新数据
+        await UserService.add({username,introduction,gender:Number(gender),
+                             avatar,role,password})
+        .then(result=>{
+            if (result.affectedRows == 1) {
+                res.send({
+                    code: '200',
+                })
+            }        
+        })
+            
     }
 }
 module.exports = UserController

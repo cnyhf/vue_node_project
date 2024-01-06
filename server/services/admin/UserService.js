@@ -69,6 +69,30 @@ const UserService = {
                 }                             
             });
         });      
+    },
+    add:async({username,introduction,gender,avatar,password,role})=>{
+        return new Promise((resolve, reject) => {
+            // 从连接池中获取一个连接并执行查询
+            pool.getConnection((err, connection) => {            
+                if (err) {
+                    console.error('Error getting MySQL connection:', err);
+                    reject(err); // 返回 Promise 的 reject 部分
+                    return;
+                }
+                var  sql = 'INSERT INTO users(username,introduction,gender,avatar,password,role) VALUES(?,?,?,?,?,?)';
+                connection.query(sql, [username,introduction,gender,avatar,password,role], (queryErr, result) => {
+                    
+                    if (queryErr) {
+                        console.error('Error querying the database:', queryErr);
+                        reject(queryErr); // 返回 Promise 的 reject 部分
+                        return;
+                    }
+                    console.log("reslut:",result)
+                    resolve(result);
+                    connection.release();                      
+                });         
+            });
+        });      
     }
 }
 module.exports = UserService

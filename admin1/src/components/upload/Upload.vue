@@ -45,7 +45,7 @@ const handleChange = (file)=>{
   display: block;
 }
 
-::v-deep .avatar-uploader .el-upload {
+::v-deep.avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
   cursor: pointer;
@@ -54,11 +54,11 @@ const handleChange = (file)=>{
   transition: var(--el-transition-duration-fast);
 }
 
-::v-deep .avatar-uploader .el-upload:hover {
+::v-deep.avatar-uploader .el-upload:hover {
   border-color: var(--el-color-primary);
 }
 
-::v-deep .el-icon.avatar-uploader-icon {
+::v-deep.el-icon.avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
   width: 178px;
