@@ -89,11 +89,37 @@ const UserController = {
         .then(result=>{
             if (result.affectedRows == 1) {
                 res.send({
-                    code: '200',
+                    code: 200,
                 })
             }        
         })
             
-    }
+    },
+    getList:async(req,res)=>{
+       const result =  await UserService.getList(req.params.id)    
+       res.send({
+        code:200,
+        data:result
+       })
+    },
+    delList:async(req,res)=>{
+        // console.log(req.params.id)
+        const result =  await UserService.delList(req.params.id)         
+            res.send({
+                code: 200,
+            })
+    },
+    putList:async(req,res)=>{
+
+        const { id,username,password, introduction, role } = req.body
+        const result =  await UserService.putList( id,username,password, introduction, role )  
+        .then(result=>{
+            if(result.affectedRows==1){
+                res.send({
+                    code:200,
+                   })
+            }
+        })        
+     },
 }
 module.exports = UserController

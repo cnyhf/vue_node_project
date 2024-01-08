@@ -93,6 +93,95 @@ const UserService = {
                 });         
             });
         });      
-    }
+    },
+    getList:async(getid)=>{
+        return new Promise((resolve, reject) => {
+            // 从连接池中获取一个连接并执行查询
+            pool.getConnection((err, connection) => {            
+                if (err) {
+                    console.error('Error getting MySQL connection:', err);
+                    reject(err); // 返回 Promise 的 reject 部分
+                    return;
+                }
+                if(getid){
+                    // console.log(getid)
+                    var  sql = 'SELECT username,role,id,introduction FROM users where id = ?';
+                    connection.query(sql,[getid], (queryErr, result) => {
+                        
+                        if (queryErr) {
+                            console.error('Error querying the database:', queryErr);
+                            reject(queryErr); // 返回 Promise 的 reject 部分
+                            return;
+                        }
+                        // console.log("reslut:",result)
+                        resolve(result);
+                        connection.release();                      
+                    });     
+                }else{
+                    var  sql = 'SELECT username,avatar,role,id FROM users';
+                    connection.query(sql, (queryErr, result) => {
+                        
+                        if (queryErr) {
+                            console.error('Error querying the database:', queryErr);
+                            reject(queryErr); // 返回 Promise 的 reject 部分
+                            return;
+                        }
+                        // console.log("reslut:",result)
+                        resolve(result);
+                        connection.release();                      
+                    });     
+                }
+                   
+            });
+        });   
+    },
+    delList:async(delid)=>{
+        return new Promise((resolve, reject) => {
+            // 从连接池中获取一个连接并执行查询
+            pool.getConnection((err, connection) => {            
+                if (err) {
+                    console.error('Error getting MySQL connection:', err);
+                    reject(err); // 返回 Promise 的 reject 部分
+                    return;
+                }
+                // console.log("id:",delid)
+                var  sql =  'DELETE FROM users WHERE id = ?';
+                connection.query(sql ,delid,(queryErr, result) => {
+                    if (queryErr) {
+                        console.error('Error querying the database:', queryErr);
+                        reject(queryErr); // 返回 Promise 的 reject 部分
+                        return;
+                    }
+                    console.log("reslut:",result)
+                    resolve(result);
+                    connection.release();                      
+                });         
+            });
+        }); 
+    },
+    putList:async( putid,username,password, introduction, role )=>{
+        return new Promise((resolve, reject) => {
+            // 从连接池中获取一个连接并执行查询
+            pool.getConnection((err, connection) => {            
+                if (err) {
+                    console.error('Error getting MySQL connection:', err);
+                    reject(err); // 返回 Promise 的 reject 部分
+                    return;
+                }
+                var  sql =  'UPDATE users SET username = ?,password = ?,introduction=?,role=? WHERE id = ?';
+                connection.query(sql ,[username,password, introduction, role,putid],(queryErr, result) => {
+                    if (queryErr) {
+                        console.error('Error querying the database:', queryErr);
+                        reject(queryErr); // 返回 Promise 的 reject 部分
+                        return;
+                    }
+                    console.log("reslut:",result)
+                    resolve(result);
+                    connection.release();                      
+                });         
+            });
+        }); 
+    },
+
 }
 module.exports = UserService
