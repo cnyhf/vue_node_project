@@ -17,12 +17,14 @@ const routes = [
         component:Center
     },
     {
-    path:"/user-manage/adduser",
-    component:UserAdd
+        path:"/user-manage/adduser",
+        component:UserAdd,
+        requireAdmin:true
     },
     {
         path:"/user-manage/userlist",
-        component:UserList
+        component:UserList,
+        requireAdmin:true
     },
     {
         path:"/product-manage/addproduct",

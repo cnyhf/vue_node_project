@@ -89,6 +89,7 @@
                     if(res.data.code === 200){
                         // console.log(res.data.data)
                         store.commit("changeUserInfo",res.data.data)
+                        store.commit("changeGetterRouter",false)
                         router.push('/index')  
                         // localStorage.setItem("token","zt")
                     }else{
