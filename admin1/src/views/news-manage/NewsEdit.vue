@@ -1,8 +1,8 @@
 <template>
     <div>
         <el-page-header 
-            content="添加新闻" 
-            icon="" 
+            content="编辑新闻" 
+            @back="handleBack()" 
             title="新闻管理"
         />
         <el-form
@@ -22,7 +22,10 @@
                 label="内容" 
                 prop="content"
             >
-                <editor @event="handleChange"/>
+                <editor @event="handleUploadChange" 
+                    :content="newsForm.content" 
+                    v-if="newsForm.content"
+                />
             </el-form-item>
             <el-form-item 
                 label="类别" 
@@ -47,33 +50,37 @@
                 prop="cover"
             >
             <Upload :avatar="newsForm.cover"
-                @ztchange="handleUploadChange" />
+                @ztchange="handleChange" />
             </el-form-item>
             <el-form-item>
                 <el-button 
                     type="primary" 
                     @click="submitForm()"
-                >添加新闻</el-button>
+                >编辑新闻</el-button>
             
             </el-form-item>
         </el-form>
     </div>
 </template>
 <script setup>
-import { ref,reactive } from "vue";
+import { ref,reactive,onMounted } from "vue";
 import editor from "@/components/editor/Editor";
 import Upload from '@/components/upload/Upload'
 import upload from "@/util/upload";
-import {useRouter} from 'vue-router'
+import {useRouter,useRoute} from 'vue-router'
+import axios from 'axios'
+//拿到的是所有的路由对象
 const router = useRouter()
+//拿到的是当前路由对象
+const route = useRoute()
 const newsFormRef = ref()
 const newsForm  = reactive({
     title:"",
     content:"",
-    category:1, //1 最新动态，2 典型案例  3 通知公告
+    category:"", //1 最新动态，2 典型案例  3 通知公告
     cover:"",
     file:null,
-    isPublish:"",// 0 未发布， 1 已发布
+    isPublish:0,// 0 未发布， 1 已发布
 })
 const newsFormRules  = reactive({
     title:[{
@@ -98,7 +105,7 @@ const newsFormRules  = reactive({
     }],
 })
 //每次editor内容改变的回调
-const handleChange = data=>{
+const handleUploadChange = data=>{
     // console.log(data)]
     newsForm.content = data
 }
@@ -117,7 +124,7 @@ const options = [
         value:3
     },
 ]
-const handleUploadChange = (file)=>{
+const handleChange = (file)=>{
     //本地回显用的,生成blob这样一个二进制的地址
     newsForm.cover = URL.createObjectURL(file)
     //提交给后端的
@@ -126,13 +133,22 @@ const handleUploadChange = (file)=>{
 const submitForm = ()=>{
     newsFormRef.value.validate(async(valid)=>{
         if(valid){
-            // console.log(newsForm)
             //后台通信
-            await upload("/adminapi/news/add",newsForm)
-            router.push(`/news-manage/newslist`)
+            await upload("/adminapi/news/list/",newsForm)
+            router.back()
         }
     })
 }
+const handleBack = ()=>{
+    router.back()
+}
+//获取当前页面数据
+onMounted(async()=>{
+    // console.log(route.params.num)
+    const res = await axios.get(`/adminapi/news/list/${route.params.num}`)
+    console.log(res.data.data[0])
+    Object.assign(newsForm,res.data.data[0])
+})
 </script>
 <style lang="scss" scoped>                                                                                                                                                       
 .el-form{

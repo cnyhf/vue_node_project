@@ -8,6 +8,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const UserRouter = require('./routes/admin/UserRouter');
+const NewsRouter = require('./routes/admin/NewsRouter');
 const JWT = require('./util/JWT');
 var app = express();
 // app.use(session({
@@ -61,6 +62,7 @@ app.use((req,res,next)=>{
 })
 
 app.use(UserRouter)
+app.use(NewsRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
