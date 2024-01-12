@@ -134,7 +134,7 @@ const submitForm = ()=>{
     newsFormRef.value.validate(async(valid)=>{
         if(valid){
             //后台通信
-            await upload("/adminapi/news/list/",newsForm)
+            await upload("/adminapi/news/list",newsForm)
             router.back()
         }
     })

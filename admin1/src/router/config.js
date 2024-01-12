@@ -4,6 +4,7 @@ import UserAdd from '../views/user-manage/UserAdd.vue'
 import UserList from '../views/user-manage/UserList.vue'
 import ProductAdd from '../views/product-manage/ProductAdd.vue'
 import ProductList from '../views/product-manage/ProductList.vue'
+import ProductEdit from '../views/product-manage/ProductEdit.vue'
 import NewsAdd from "../views/news-manage/NewsAdd.vue"
 import NewsList from "../views/news-manage/NewsList.vue"
 import NewsEdit from "../views/news-manage/NewsEdit.vue"
@@ -36,6 +37,11 @@ const routes = [
         component:ProductList
     },
     {
+        path:"/product-manage/editproducts/:pid",
+        component:ProductEdit
+    },
+   
+    {
         path:"/news-manage/addnews",
         component:NewsAdd
     },
@@ -52,6 +58,7 @@ const routes = [
         redirect:"/index"
     },
     {
+        // 实现通配符路由，捕获所有不匹配其他路由的路径
         path:"/:pathMatch(.*)*",
         name:"Notfound",
         component:NotFound

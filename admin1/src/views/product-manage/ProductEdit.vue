@@ -1,8 +1,8 @@
 <template>
     <div>
         <el-page-header 
-            content="添加产品" 
-            icon="" 
+            content="编辑产品" 
+            @back="handleBack()" 
             title="产品管理"
         />
         <el-form
@@ -47,18 +47,20 @@
                 <el-button 
                     type="primary" 
                     @click="submitForm()"
-                >添加产品</el-button>
+                >更新产品</el-button>
             
             </el-form-item>
         </el-form>
     </div>
 </template>
 <script setup>
-import { ref,reactive } from "vue";
+import { ref,reactive,onMounted } from "vue";
 import Upload from '@/components/upload/Upload'
 import upload from "@/util/upload";
-import {useRouter} from 'vue-router'
+import {useRouter,useRoute} from 'vue-router'
+import axios from 'axios'
 const router = useRouter()
+const route = useRoute()
 const productsFormRef = ref()
 const productsForm  = reactive({
     title:"",
@@ -101,11 +103,21 @@ const submitForm = ()=>{
         if(valid){
             // console.log(productsForm)
             //后台通信
-            await upload("/adminapi/products/add",productsForm)
-            router.push(`/product-manage/productlist`)
+            await upload("/adminapi/products/list",productsForm)
+            router.back()
         }
     })
 }
+const handleBack = ()=>{
+    router.back()
+}
+//获取当前页面数据
+onMounted(async()=>{
+    // console.log(route.params.num)
+    const res = await axios.get(`/adminapi/products/list/${route.params.pid}`)
+    console.log(res.data.data[0])
+    Object.assign(productsForm,res.data.data[0])
+})
 </script>
 <style lang="scss" scoped>                                                                                                                                                       
 .el-form{
