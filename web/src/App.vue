@@ -1,22 +1,29 @@
 <template>
-
+  <Navbar/>
   <router-view/>
 </template>
+<script setup>
+import Navbar from '@/components/Navbar'
+</script>
 
 <style lang="scss">
 *{
-  margin: 0;
-  padding: 0;
+  margin:0;
+  padding:0
 }
+
 ::-webkit-scrollbar{
-  width:5px;
+  width: 5px;
   height: 5px;
-  position:absolute;
+  position: absolute;
 }
+
 ::-webkit-scrollbar-thumb{
-  background-color:#cccccc;
+  background:#1890ff;
 }
+
 ::-webkit-scrollbar-track{
-  background: #d4d2d2;
+  background:#ddd;
 }
+
 </style>
