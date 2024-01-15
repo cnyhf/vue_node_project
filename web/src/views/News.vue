@@ -41,21 +41,129 @@
         </div>
       </el-popover>
     </div>
+
+    <div class="topnews">
+      <el-row :gutter="20">
+        <el-col :span="6"
+          v-for="item in topNewsList"
+          :key="item.num"
+        >
+          <el-card :body-style="{ padding: '0px' }" shadow="hover">
+            <div class="image" :style="{
+              backgroundImage:`url(http://localhost:3000${item.cover})`
+            }">
+
+            </div>
+            <div style="padding: 14px">
+              <span>{{ item.title }}</span>
+              <div class="bottom">
+                <time class="time">{{ whichTime(item.editTime) }}</time>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+    <el-tabs 
+      style="margin:20px" 
+      v-model="whichTab" 
+      class="demo-tabs" 
+      @tab-click="handleClick"
+    >
+      <el-tab-pane 
+        :key="item.name"
+        v-for="item in tablist"
+        :label="item.label" 
+        :name="item.name"
+      >
+        <el-row :gutter="20">
+          <el-col
+            :span="18"
+         >
+        
+            <div 
+              v-for="data in tabnews[item.name]" 
+              :key="data.num"
+              style="padding: 10px;"
+            >
+              <el-card :body-style="{ padding: '0px' }" shadow="hover">
+                <div class="tab-image" :style="{
+                  backgroundImage:`url(http://localhost:3000${data.cover})`
+                }">
+
+                </div>
+                <div style="padding: 14px;float: left;">
+                  <span>{{ data.title }}</span>
+                  <div class="bottom">
+                    <time class="tab-time">{{ whichTime(data.editTime) }}</time>
+                  </div>
+                </div>
+              </el-card>
+            </div>
+        </el-col>
+        
+        <el-col
+            :span="6"
+         >
+          <el-timeline>
+            <el-timeline-item
+              v-for="(data, index) in tabnews[item.name]"
+              :key="index"
+              :timestamp="whichTime(item.editTime)"
+            >
+              {{ data.title }}
+            </el-timeline-item>
+          </el-timeline>
+        </el-col>
+        </el-row>
+    </el-tab-pane>
+    </el-tabs>
+    <el-backtop :visibility-height="100"/>
   </div>
 </template>
 <script setup>
   import { Search } from "@element-plus/icons-vue";
   import axios from 'axios'
   import {ref,onMounted,computed} from 'vue'
+  import moment from 'moment'
+  import _ from "lodash";
+  moment.locale("zh-cn")
   const searchText = ref("")
   const visible = ref(false)
   const newslist = ref([])
+  const whichTab = ref("first")
   onMounted(async() => {
     const res = await axios.get("/webapi/news/list")
     // console.log(res.data)
+    
     newslist.value = res.data.data
+    console.log(_.groupBy(newslist.value,item=>item.category))
   })
-  const searchnewslist = computed(()=>newslist.value.filter(item=>item.title.includes(searchText.value)))
+  const searchnewslist = computed(
+    ()=>searchText.value
+        ?newslist.value.filter(item=>item.title.includes(searchText.value))
+        :[]
+    )
+  const topNewsList = computed(()=>newslist.value.slice(0,4))
+  const whichTime = time =>{
+    return moment(time).format("lll")
+  }
+  // 动态创建tab
+  const tablist = [
+      {
+        label:"最新动态",
+        name:1
+      },
+      {
+        label:"典型案例",
+        name:2
+      },
+      {
+        label:"通知公告",
+        name:3
+      },
+  ]
+  const tabnews = computed(()=>_.groupBy(newslist.value,item=>item.category))
 </script>
 <style lang="scss" scoped>
 .container {
@@ -84,4 +192,26 @@
     color:red;
   }
 }
+.topnews{
+  margin:20px;
+  .image{
+    width:100%;
+    height:150px;
+    background-size: cover;
+  }
+  .time{
+    font-size:13px;
+    color:gray
+  }
+}
+.tab-image{
+  width:150px;
+  height: 100px;
+  background-size: cover;
+  float:left
+}
+.tab-time{
+    font-size:13px;
+    color:gray
+  }
 </style>
