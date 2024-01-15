@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 const UserRouter = require('./routes/admin/UserRouter');
 const NewsRouter = require('./routes/admin/NewsRouter');
 const ProductsRouter = require('./routes/admin/ProductsRouter');
+const webNewsRouter = require('./routes/web/NewsRouter')
 const JWT = require('./util/JWT');
 var app = express();
 // app.use(session({
@@ -31,6 +32,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+
+app.use(webNewsRouter)
 /* 
   /adminapi/  后台系统用的
   /webapi/      企业官网用的  

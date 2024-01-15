@@ -54,14 +54,16 @@ const NewsController = {
     },
     publish:async(req,res)=>{
         const { num,isPublish } = req.body
+        console.log("这是更新",isPublish)
         editTime = new Date()
-        await NewsService.publish(
+        const result=await NewsService.publish(
             num,isPublish,
             editTime
         )
         .then(result=>{
             res.send({
                 code:200,
+                data:result
             })
         })
         

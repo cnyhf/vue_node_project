@@ -42,8 +42,8 @@
                     <template #default="scope">
                         <el-switch 
                             v-model="scope.row.isPublish" 
-                            :active-value="1"
-                            :inactive-value="0"
+                            active-value="1"
+                            inactive-value="0"
                             @change="handleSwitchChange(scope.row)"
                          />
                     </template>
@@ -114,7 +114,6 @@ onMounted(()=>{
 const getTableData =async ()=>{
    const res = await axios.get(`/adminapi/news/list`)
    if (res.data.code === 200) {  
-    console.log("是否发布",res.data.data[0].isPublish)
     tableData.value = res.data.data;
   }
 }
@@ -127,13 +126,11 @@ const categoryFormat = (category)=>{
 //开关回调
 
 const handleSwitchChange =async item=>{
-    await axios.put(`/adminapi/news/publish`,{
+    const res = await axios.put(`/adminapi/news/publish`,{
         num:item.num,
         isPublish:item.isPublish
     }) 
-    await getTableData()
-
-   
+    await getTableData()  
 }
 //预览回调
 const handlePerview = (data)=>{
