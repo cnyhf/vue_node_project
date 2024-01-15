@@ -1,10 +1,12 @@
 <template>
+  <!-- 背景图片 -->
   <div class="container">
     <div class="news-header"
           :style="{
             backgroundImage:`url(${require('@/assets/newsbg.jpg')})`
           }">
     </div>
+    <!-- 搜索框 -->
     <div class="search">
       <el-popover
         placement="bottom"
@@ -29,6 +31,7 @@
                 v-for="data in searchnewslist"
                 :key="data.num"
                 class="search-item"
+                @click="handleChangepage(data.num)"
             >
                 {{data.title}}
             </div>
@@ -41,14 +44,18 @@
         </div>
       </el-popover>
     </div>
-
+    <!-- 已发布新闻展示 -->
     <div class="topnews">
       <el-row :gutter="20">
         <el-col :span="6"
           v-for="item in topNewsList"
           :key="item.num"
         >
-          <el-card :body-style="{ padding: '0px' }" shadow="hover">
+          <el-card 
+            :body-style="{ padding: '0px' }" 
+            shadow="hover"
+            @click="handleChangepage(item.num)"
+          >
             <div class="image" :style="{
               backgroundImage:`url(http://localhost:3000${item.cover})`
             }">
@@ -64,6 +71,7 @@
         </el-col>
       </el-row>
     </div>
+    <!-- 新闻分类展示 -->
     <el-tabs 
       style="margin:20px" 
       v-model="whichTab" 
@@ -86,7 +94,11 @@
               :key="data.num"
               style="padding: 10px;"
             >
-              <el-card :body-style="{ padding: '0px' }" shadow="hover">
+              <el-card 
+                :body-style="{ padding: '0px' }" 
+                shadow="hover"
+                @click="handleChangepage(data.num)"
+              >
                 <div class="tab-image" :style="{
                   backgroundImage:`url(http://localhost:3000${data.cover})`
                 }">
@@ -101,7 +113,7 @@
               </el-card>
             </div>
         </el-col>
-        
+        <!-- 右侧时间线 -->
         <el-col
             :span="6"
          >
@@ -118,6 +130,7 @@
         </el-row>
     </el-tab-pane>
     </el-tabs>
+    <!-- 回顶小按钮 -->
     <el-backtop :visibility-height="100"/>
   </div>
 </template>
@@ -127,6 +140,7 @@
   import {ref,onMounted,computed} from 'vue'
   import moment from 'moment'
   import _ from "lodash";
+  import { useRouter } from "vue-router";
   moment.locale("zh-cn")
   const searchText = ref("")
   const visible = ref(false)
@@ -137,7 +151,7 @@
     // console.log(res.data)
     
     newslist.value = res.data.data
-    console.log(_.groupBy(newslist.value,item=>item.category))
+    // console.log(_.groupBy(newslist.value,item=>item.category))
   })
   const searchnewslist = computed(
     ()=>searchText.value
@@ -164,6 +178,11 @@
       },
   ]
   const tabnews = computed(()=>_.groupBy(newslist.value,item=>item.category))
+  // 点击新闻卡片跳转新闻详情页面
+  const router = useRouter()
+  const handleChangepage = (num)=>{
+    router.push(`/news/${num}`)
+  }
 </script>
 <style lang="scss" scoped>
 .container {

@@ -9,6 +9,14 @@ const NewsController = {
             data:result
         })
     },   
+    getTopList:async(req,res)=>{
+        const result = await NewsService.getTopList(req.query.limit)
+        // console.log(result)
+        res.send({
+            code:200,
+            data:result
+        })
+    },  
 }
 
 module.exports = NewsController

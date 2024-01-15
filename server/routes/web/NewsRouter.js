@@ -6,5 +6,7 @@ const NewsController = require("../../controllers/web/NewsControllers")
 
 
 NewsRouter.get("/webapi/news/list",NewsController.getList)
+NewsRouter.get("/webapi/news/list/:num",NewsController.getList)
+NewsRouter.get("/webapi/news/toplist",NewsController.getTopList)
 
 module.exports = NewsRouter
