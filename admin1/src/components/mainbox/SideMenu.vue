@@ -1,6 +1,6 @@
 <template>
-    <el-aside :width="$store.state.isCollapsed?'64px':'200px'">
-        <el-menu :collapse="$store.state.isCollapsed"
+    <el-aside :width="isCollapsed?'64px':'200px'">
+        <el-menu :collapse="isCollapsed"
         :collapse-transition="false"
         :router="true"
         :default-active="route.fullPath"
@@ -53,12 +53,17 @@
 <script setup>
 import { HomeFilled ,Avatar,UserFilled,MessageBox,Reading,Pointer} from "@element-plus/icons-vue";
 import {useRoute} from "vue-router";
-import { useStore } from "vuex";
+//Pinia引入:
+import { mainStore } from "../../store/index";
+import { storeToRefs } from 'pinia';
 const route = useRoute()
-const store = useStore()
+//创建PiniaStore
+const storePinia = mainStore();
+// 从 store 中解构出需要的状态
+const { userInfo ,isCollapsed} = storeToRefs(storePinia);
 const vAdmin = {
     mounted(el) {
-        if(store.state.userInfo.role!==1){
+        if(userInfo.value.role!==1){
             el.parentNode.removeChild(el)
         }
     },

@@ -48,8 +48,8 @@
     import {useRouter} from 'vue-router'
     import axios from 'axios'
     import {ElMessage} from 'element-plus'
-    import {useStore} from 'vuex'
-    const store = useStore()
+    import {mainStore} from '../store/index'
+    const store = mainStore()
     //使用双相数据绑定拿到用户和密码
     const loginForm =reactive({
         username:"",
@@ -84,12 +84,14 @@
                 // axios.get("http://localhost:3000/users").then(res=>{
                 //     console.log(res.data)
                 // })
-                axios.post("/adminapi/user/login",loginForm).then(res=>{
-                    console.log(res.data)
+                axios.post("/adminapi/user/login",loginForm).then(res=>{             
                     if(res.data.code === 200){
+                        console.log(res.data)
                         // console.log(res.data.data)
-                        store.commit("changeUserInfo",res.data.data)
-                        store.commit("changeGetterRouter",false)
+                        // debugger
+                        store.changeUserInfo(res.data.data)
+                        store.changeGetterRouter(false)
+                            
                         router.push('/index')  
                         // localStorage.setItem("token","zt")
                     }else{
@@ -97,7 +99,7 @@
                     }
                 })   
                 .catch((err)=>{
-                    console.log(err.response.data)
+                    console.log(err.response)
                 } ) 
             }
         })
@@ -109,6 +111,8 @@
     };
   
 
+
+    
     //配置particles
     const options = {
         background: {

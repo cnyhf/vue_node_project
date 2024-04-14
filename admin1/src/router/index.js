@@ -2,18 +2,26 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import MainBox from '../views/MainBox.vue'
 import RoutesConfig from './config'
-import store from "../store/index";
+import {mainStore} from "../store/index";
+import route1 from "./config"
 const routes = [
+  {
+    path:"/",
+    redirect:"/login",
+  },
   {
     path:"/login",
     name:"login",
     component:Login
   },
+
   {
     path:"/mainbox",
     name:"mainbox",
-    component:MainBox
-  }
+    component:MainBox,
+    // children:route1
+  },
+  // ...route1
 ]
 
 const router = createRouter({
@@ -22,6 +30,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to,from,next)=>{
+    //创建PiniaStore
+  var storePinia = mainStore();
+
   if(to.name==="login"){
     next()
   }else{
@@ -33,11 +44,11 @@ router.beforeEach((to,from,next)=>{
     //如果授权（已登录过）next
     }else{
       //如果是第一次
-      if(!store.state.isGetterRouter){
+      if(!storePinia.isGetterRouter){
         //删除所有嵌套路由，有点复杂
         //mainbox
         router.removeRoute("mainbox")
-        ConfigRouter()
+        ConfigRouter(storePinia)
         next({
           path:to.fullPath
         })
@@ -48,7 +59,7 @@ router.beforeEach((to,from,next)=>{
     }
   }
 })
-const ConfigRouter = ()=>{
+const ConfigRouter = (storePinia)=>{
   if(!router.hasRoute("mainbox")){
     router.addRoute({
       path:"/mainbox",
@@ -58,14 +69,15 @@ const ConfigRouter = ()=>{
   }
   //mainbox的嵌套路由，后面根据权限动态添加
   RoutesConfig.forEach(item => {
-    checkPermission(item) && router.addRoute("mainbox",item)
+    checkPermission(item,storePinia) && router.addRoute("mainbox",item)
   });
   //改变isGetterRouter为true
-  store.commit("changeGetterRouter",true)
+  storePinia.changeGetterRouter(true)
 }
-const checkPermission = (item)=>{
+const checkPermission = (item,storePinia)=>{
+    //创建PiniaStore
   if(item.requireAdmin){
-    return store.state.userInfo.role===1
+    return storePinia.userInfo.role===1
   }
   return true
 }

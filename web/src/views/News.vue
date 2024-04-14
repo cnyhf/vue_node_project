@@ -1,3 +1,4 @@
+<!-- 新闻中心 -->
 <template>
   <!-- 背景图片 -->
   <div class="container">

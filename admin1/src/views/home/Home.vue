@@ -5,13 +5,15 @@
             icon="" 
             title="企业门户网站管理系统"
         />
+        <button @click="log">log</button>
+
         <el-card class="box-card">
             <el-row>
                 <el-col :span="4">
                     <el-avatar :size="100" :src="avatarUrl" />
                 </el-col>
                 <el-col :span="20">
-                    <h3 style="line-height: 100px;">欢迎 {{store.state.userInfo.username}} 回来,{{ welcomeText }}</h3>
+                    <h3 style="line-height: 100px;">欢迎 {{userInfo.username}} 回来,{{ welcomeText }}</h3>
                 </el-col>
             </el-row>
         </el-card>
@@ -39,22 +41,25 @@ import axios from "axios";
 // axios.get("/adminapi/user/home").then(res=>{
 //     console.log(res.data)
 // })
-import {useStore} from 'vuex'
+import {mainStore} from '../../store/index'
 import {computed,onMounted,ref} from 'vue'
-const store = useStore()
+import { storeToRefs } from 'pinia';
+const store = mainStore()
 const loopList = ref([])
-console.log(store.state)
+let {userInfo} = storeToRefs(store)
 const avatarUrl = computed(
     ()=>
-    store.state.userInfo.avatar
-    ?'http://localhost:3000'+store.state.userInfo.avatar
+    userInfo.value.avatar
+    ?'http://localhost:3000'+userInfo.value.avatar
     :`https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png`
 );
 const welcomeText = computed(()=>new Date().getHours()<12?'要开心啊，每一天！':'你可能累了，喝杯咖啡提提神吧！')
 onMounted(()=>{
     getData()
 })
-
+const log=()=>{
+    console.log(store.userInfo);
+}
 const getData =async ()=>{
    const res = await axios.get(`/adminapi/products/list`)
    if (res.data.code === 200) {  

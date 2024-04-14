@@ -9,6 +9,7 @@ import NewsAdd from "../views/news-manage/NewsAdd.vue"
 import NewsList from "../views/news-manage/NewsList.vue"
 import NewsEdit from "../views/news-manage/NewsEdit.vue"
 import NotFound from "../views/notfound/NotFound.vue"
+import Login from '../views/Login.vue'
 const routes = [
     {
         path:"/index",
@@ -55,7 +56,7 @@ const routes = [
     },
     {
         path:"/",
-        redirect:"/index"
+        redirect:"/login",
     },
     {
         // 实现通配符路由，捕获所有不匹配其他路由的路径

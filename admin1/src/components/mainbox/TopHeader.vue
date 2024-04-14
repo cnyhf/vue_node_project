@@ -7,7 +7,7 @@
             <span style="margin-left: 10px;">企业门户网站管理系统</span>
         </div>
         <div class="right">
-            <span>欢迎 {{store.state.userInfo.username}} 回来</span>
+            <span>欢迎 {{userInfo.username}} 回来</span>
             <el-dropdown>
                 <span class="el-dropdown-link">
                     <el-icon :size="30" color="white"><User /></el-icon>
@@ -26,20 +26,26 @@
     </el-header>
 </template>
 <script setup>
-import {useStore} from 'vuex'
+//Pinia引入:
+import { mainStore } from "../../store/index";
 import {Menu,User} from '@element-plus/icons-vue'
 import { useRouter } from "vue-router";
-const store = useStore()
+import { storeToRefs } from 'pinia';
+//创建PiniaStore
+const store = mainStore();
 const router = useRouter()
+// 从 store 中解构出需要的状态
+const { userInfo } = storeToRefs(store);
 const handleCollapsed = ()=>{
-    store.commit("changeCollapsed")
+    //change
+    store.changeCollapsed()
 }
 const handleCenter = () =>{
     router.push("/center")
 }
 const handleLogout = () =>{
     localStorage.removeItem("token")
-    store.commit("clearUserInfo")
+    store.clearUserInfo()
     router.push("/login")
 }
 </script>

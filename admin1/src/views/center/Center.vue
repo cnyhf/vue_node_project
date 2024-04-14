@@ -5,13 +5,12 @@
             icon="" 
             title="企业门户网站管理系统"
         />
-
         <el-row :gutter="20" class="el-row">
             <el-col :span="8">
                 <el-card class="box-card">
                     <el-avatar :size="100" :src="avatarUrl" />
-                    <h3>{{ store.state.userInfo.username }}</h3>
-                    <h5>{{ store.state.userInfo.role===1?'管理员':'编辑' }}</h5>
+                    <h3>{{ userInfo.username }}</h3>
+                    <h5>{{ userInfo.role===1?'管理员':'编辑' }}</h5>
                 </el-card>
             </el-col>
             <el-col :span="16">
@@ -83,26 +82,33 @@
     </div>
 </template>
 <script setup>
-import {useStore} from 'vuex'
+import { mainStore } from "../../store/index";
 import {computed,ref,reactive} from 'vue'
-
+import { storeToRefs } from 'pinia';
 
 import {ElMessage} from 'element-plus'
 import upload from "@/util/upload";
 import Upload from '@/components/upload/Upload'
-const store = useStore()
+//创建PiniaStore
+const storePinia = mainStore();
+// 从 store 中解构出需要的状态
+const { userInfo} = storeToRefs(storePinia);
+console.log(userInfo);
+// const userInfoa=ref({
+//     avatar:'',
+// })
 
-const avatarUrl = computed(
-    ()=>
-    store.state.userInfo.avatar
-    ?'http://localhost:3000'+store.state.userInfo.avatar
+// console.log(userInfo.avatar);
+
+// console.log(userInfo.value.avatar?1:2);
+const avatarUrl = computed(()=>userInfo.value.avatar?'http://localhost:3000'+userInfo.value.avatar
     :`https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png`
 );
 
 //帮助校验表单所有的是否通过
 const userFormRef = ref()
 //解构
-const {username,gender,introduction,avatar} = store.state.userInfo
+const {username,gender,introduction,avatar} = userInfo.value
 //收集表单信息，双向绑定关联字段
 const userForm =reactive({
     username,
@@ -158,8 +164,9 @@ const submitForm=()=>{
             const res = await upload("/adminapi/user/upload",userForm)
             
             if(res.code===200){
-                store.commit("changeUserInfo",res.data)
+                storePinia.changeUserInfo(res.data)
                 ElMessage.success("更新成功")
+                console.log(res.data)
             }
         }
     })
